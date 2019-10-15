@@ -27,7 +27,7 @@ const SINGLE_SAMPLE_METHODS = (First(),)
 include("dataframes.jl")
 
 
-function resample(data, org_inds, new_inds, method::AbstractWeightedSampleMethod = Mean())
+function resample(data::AbstractArray, org_inds, new_inds, method::AbstractWeightedSampleMethod = Mean())
     data, org_inds = sort_input(data, org_inds)
     inds, weights = resample_indices_and_weights(org_inds, new_inds, method)
     new_data = Vector{promote_type(eltype(data), eltype(first(weights)))}(undef, size(new_inds))
@@ -39,7 +39,7 @@ function resample(data, org_inds, new_inds, method::AbstractWeightedSampleMethod
 end
 
 
-function resample(data, org_inds, new_inds, method::AbstractSingleSampleMethod)
+function resample(data::AbstractArray, org_inds, new_inds, method::AbstractSingleSampleMethod)
     data, org_inds = sort_input(data, org_inds)
     inds = resample_indices(org_inds, new_inds, method)
     new_data = similar(data, size(new_inds))
@@ -51,7 +51,7 @@ function resample(data, org_inds, new_inds, method::AbstractSingleSampleMethod)
 end
 
 
-function resample(data, org_inds, new_inds, ::None)
+function resample(data::AbstractArray, org_inds, new_inds, ::None)
     @warn "The resample method `None()` is a placeholder to ignore DataFrame columns in resampling."
 end
 
