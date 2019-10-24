@@ -53,13 +53,13 @@ using Plots
 plot(times_long, power_long, label = "5 min", st = :step)
 plot!(times_short, power_short, label = "1 h", st = :step)
 ```
-![](plots/power)
+![](plots/power.png)
 
 ```julia
 plot(times_long, cumsum(energy_long), label = "5 min", st = :step)
 plot!(times_short, cumsum(energy_short), label = "1 h", st = :step)
 ```
-![](plots/energy)
+![](plots/energy.png)
 
 Instead of a vector of new indices a step length can be provided as well.
 ```julia
