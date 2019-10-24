@@ -1,4 +1,4 @@
-function resample(df::DataFrame, index_col, new_inds, methods = Mean())
+function resample(df::DataFrame, index_col, new_inds, methods)
     cols = names(df)
     index_col = get_index_col(cols, index_col)
     methods = get_dataframe_methods(methods, cols, index_col)
@@ -41,11 +41,13 @@ function resample(df::DataFrame, index_col, new_inds, methods = Mean())
     return new_df
 end
 
+resample(df::DataFrame, index_col, new_inds; methods...) = resample(df, index_col, new_inds, methods)
+
 
 get_index_col(cols, index_col::Symbol) = index_col
 get_index_col(cols, index_col::Int) = cols[index_col]
 
-function get_dataframe_methods(d::Dict{Symbol, <:AbstractSampleMethod}, cols, index_col)
+function get_dataframe_methods(d, cols, index_col)
     col_methods = Dict{Symbol, AbstractSampleMethod}()
 
     for col in keys(d)

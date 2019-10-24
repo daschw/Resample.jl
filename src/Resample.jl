@@ -7,7 +7,7 @@ using DataFrames
 using Dates
 
 export resample
-export Mean, Sum, First, Last, Min, Max, None
+export Mean, Sum, First, None# TODO:, Last, Min, Max, None
 
 
 abstract type AbstractSampleMethod end
@@ -19,9 +19,11 @@ struct Mean <: AbstractWeightedSampleMethod end
 struct Sum <: AbstractWeightedSampleMethod end
 
 struct First <: AbstractSingleSampleMethod end
+#= TODO:
 struct Last <: AbstractSingleSampleMethod end
 struct Min <: AbstractSingleSampleMethod end
 struct Max <: AbstractSingleSampleMethod end
+=#
 
 struct None <: AbstractSampleMethod end
 
