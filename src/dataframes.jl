@@ -3,6 +3,7 @@ function resample(df::DataFrame, index_col, new_inds, methods = Mean())
     index_col = get_index_col(cols, index_col)
     methods = get_dataframe_methods(methods, cols, index_col)
     df = sort(df, index_col)
+    new_inds = get_new_indices(df[!, index_col], new_inds)
 
     if any(m -> isa(m, AbstractWeightedSampleMethod), values(methods))
         weighted_indices = resample_indices(df[!, index_col], new_inds, Mean())

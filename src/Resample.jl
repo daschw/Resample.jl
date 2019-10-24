@@ -4,9 +4,10 @@ import LinearAlgebra: dot
 import Statistics: mean
 
 using DataFrames
+using Dates
 
-export resample, Mean, Sum
-export resample_new
+export resample
+export Mean, Sum, First, Last, Min, Max, None
 
 
 abstract type AbstractSampleMethod end
@@ -16,7 +17,12 @@ abstract type AbstractSingleSampleMethod <: AbstractSampleMethod end
 
 struct Mean <: AbstractWeightedSampleMethod end
 struct Sum <: AbstractWeightedSampleMethod end
+
 struct First <: AbstractSingleSampleMethod end
+struct Last <: AbstractSingleSampleMethod end
+struct Min <: AbstractSingleSampleMethod end
+struct Max <: AbstractSingleSampleMethod end
+
 struct None <: AbstractSampleMethod end
 
 
@@ -27,10 +33,11 @@ const SINGLE_SAMPLE_METHODS = (First(),)
 include("dataframes.jl")
 
 
-function resample(data::AbstractArray, org_inds, new_inds, method::AbstractWeightedSampleMethod = Mean())
+function resample(data::AbstractVector, org_inds, new_inds, method::AbstractWeightedSampleMethod = Mean())
     data, org_inds = sort_input(data, org_inds)
+    new_inds = get_new_indices(org_inds, new_inds)
     inds, weights = resample_indices_and_weights(org_inds, new_inds, method)
-    new_data = Vector{promote_type(eltype(data), eltype(first(weights)))}(undef, size(new_inds))
+    new_data = zeros(size(new_inds))
     for i in eachindex(new_data)
         new_data[i] = dot(data[inds[i]], weights[i])
     end
@@ -39,8 +46,9 @@ function resample(data::AbstractArray, org_inds, new_inds, method::AbstractWeigh
 end
 
 
-function resample(data::AbstractArray, org_inds, new_inds, method::AbstractSingleSampleMethod)
+function resample(data::AbstractVector, org_inds, new_inds, method::AbstractSingleSampleMethod)
     data, org_inds = sort_input(data, org_inds)
+    new_inds = get_new_indices(org_inds, new_inds)
     inds = resample_indices(org_inds, new_inds, method)
     new_data = similar(data, size(new_inds))
     for i in eachindex(new_data)
@@ -51,7 +59,7 @@ function resample(data::AbstractArray, org_inds, new_inds, method::AbstractSingl
 end
 
 
-function resample(data::AbstractArray, org_inds, new_inds, ::None)
+function resample(data::AbstractVector, org_inds, new_inds, ::None)
     @warn "The resample method `None()` is a placeholder to ignore DataFrame columns in resampling."
 end
 
@@ -194,5 +202,9 @@ function get_sample(org_inds, start, stop, method::Sum)
     end
     return istart:istop, weights
 end
+
+get_new_indices(org_inds, new_inds::AbstractVector) = new_inds
+get_new_indices(org_inds, step) = first(org_inds):step:last(org_inds)
+
 
 end # module
