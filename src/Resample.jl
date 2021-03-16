@@ -3,7 +3,7 @@ module Resample
 import LinearAlgebra: dot
 import Statistics: mean
 
-using DataFrames
+using Tables
 using Dates
 
 export resample
@@ -32,7 +32,7 @@ const WEIGHTED_SAMPLE_METHODS = (Mean(), Sum())
 const SINGLE_SAMPLE_METHODS = (First(),)
 
 
-include("dataframes.jl")
+include("tables.jl")
 
 
 function resample(data::AbstractVector, org_inds, new_inds, method::AbstractWeightedSampleMethod = Mean())
@@ -71,9 +71,11 @@ function sort_input(data, org_inds)
     return data[sort_inds], org_inds[sort_inds]
 end
 
+get_step(inds::StepRange) = step(inds)
+get_step(inds) = inds[end] - inds[end-1]
 
 function resample_indices_and_weights(org_inds, new_inds, method)
-    Δ = mean(diff(new_inds))
+    Δ = get_step(new_inds)
 
     inds = [1:0 for i in eachindex(new_inds)]
     weights = [Float64[] for i in eachindex(new_inds)]
@@ -89,7 +91,7 @@ end
 
 
 function resample_indices(org_inds, new_inds, method)
-    Δ = mean(diff(new_inds))
+    Δ = get_step(new_inds)
     inds = initialize_indices(length(new_inds), method)
 
     for i in eachindex(inds)
@@ -117,7 +119,7 @@ end
 
 
 function resample_weights(org_inds, new_inds, inds, method)
-    Δ = mean(diff(new_inds))
+    Δ = get_step(new_inds)
     weights = [Float64[] for i in eachindex(new_inds)]
 
     for i in eachindex(new_inds)

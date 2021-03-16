@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/daschw/Resample.jl.svg?branch=master)](https://travis-ci.com/daschw/Resample.jl)
 
-This is a small utility package for resampling `Vector`s and `DataFrames` to new indices, e.g. a new time resolution.
+This is a small utility package for resampling `Vector`s and `Tables` to new indices, e.g. a new time resolution.
 
 ## Install
 
@@ -20,11 +20,11 @@ using Resample
 resample(vec::AbstractVector, org_inds, new_inds, method = Mean())
 resample(vec::AbstractVector, org_inds, step, method = Mean())
 
-resample(df::DataFrame, index_col, new_inds, methods = Mean())
-resample(df::DataFrame, index_col, step, methods = Mean())
+resample(table, index_col, new_inds, methods = Mean())
+resample(table, index_col, step, methods = Mean())
 ```
 
-Currently implemented methods are `Mean()`, `Sum()`, `First()` and `None()` (to ignore columns in a `DataFrame`).
+Currently implemented methods are `Mean()`, `Sum()`, `First()` and `None()` (to ignore columns in a `Table`).
 
 ### Vectors
 
